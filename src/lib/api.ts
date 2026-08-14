@@ -661,8 +661,13 @@ export const api = {
     request<void>("/push/unsubscribe", { method: "POST", body: JSON.stringify(sub) }),
 
   // Agents
-  searchAgents: (name?: string) =>
-    request<ApiAgent[]>(`/agents${name ? `?name=${encodeURIComponent(name)}` : ""}`),
+  // The default page is 50; the directory wants the lot. Requesting 20 by
+  // omission silently showed a fifth of the agents with nothing saying so.
+  searchAgents: (name?: string, limit = 200) => {
+    const params = new URLSearchParams({ limit: String(limit) });
+    if (name) params.set("name", name);
+    return request<ApiAgent[]>(`/agents?${params}`);
+  },
 
   // Agents & neighbourhoods
   getAgent: (slug: string) => request<ApiAgent>(`/agents/${slug}`),

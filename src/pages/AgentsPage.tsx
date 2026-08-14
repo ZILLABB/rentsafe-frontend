@@ -52,8 +52,13 @@ export default function AgentsPage() {
 
       <FadeIn delay={0.06}>
         <Card>
-          <SectionLabel className="mb-2">
-            {debounced ? t("agents.results") : t("agents.allAgents")}
+          <SectionLabel className="mb-2 flex items-baseline justify-between">
+            <span>{debounced ? t("agents.results") : t("agents.allAgents")}</span>
+            {agents.length > 0 && (
+              <span className="font-400 normal-case tracking-normal text-subtle">
+                {agents.length}
+              </span>
+            )}
           </SectionLabel>
 
           {isLoading && (
