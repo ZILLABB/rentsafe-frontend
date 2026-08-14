@@ -321,6 +321,16 @@ export interface ApiQueueItem {
   reviewer_trust: number | null;
 }
 
+export interface ApiRentBenchmark {
+  yoy_pct: number | null;
+  period_year: number | null;
+  period_month: number | null;
+  /** "national" — NBS does not publish the rent index by state. */
+  scope: string;
+  source: string;
+  url: string;
+}
+
 export interface ApiFeeLine {
   label: string;
   amount_kobo: number;
@@ -672,6 +682,10 @@ export const api = {
   // Agents & neighbourhoods
   getAgent: (slug: string) => request<ApiAgent>(`/agents/${slug}`),
   listNeighbourhoods: () => request<ApiNeighbourhood[]>("/neighbourhoods"),
+  // Official rent inflation. The only number in the app that doesn't come from
+  // a tenant, and its job is to give the tenant numbers something to sit against.
+  rentBenchmark: () =>
+    request<ApiRentBenchmark>("/neighbourhoods/rent-benchmark"),
   compareNeighbourhoods: (codes: string[]) =>
     request<{ areas: ApiNeighbourhood[] }>(
       `/neighbourhoods/compare?codes=${codes.join(",")}`,

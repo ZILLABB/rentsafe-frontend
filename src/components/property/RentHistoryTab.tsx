@@ -1,13 +1,30 @@
+import { useQuery } from "@tanstack/react-query";
 import { FadeIn } from "@/components/motion";
 import { Card, InkPanel, SectionLabel } from "@/components/ui/Card";
 import { EmptyState } from "@/components/ui/States";
+import { api } from "@/lib/api";
 import { formatNaira, formatNairaFull } from "@/lib/format";
+import { useI18n } from "@/lib/i18n";
 import type { PropertySummary } from "@/lib/types";
+
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
 
 /** Rent history tab (design 1c): velocity banner, tenant-reported line chart vs
  *  area average, dark "first-year total cost" panel, and area percentile. */
 export function RentHistoryTab({ p }: { p: PropertySummary }) {
+  const { t } = useI18n();
   const rent = p.latestRentKobo;
+
+  // The one figure on this screen that does not come from a tenant. Its whole
+  // job is to give the tenant-reported rise something to be measured against.
+  const { data: benchmark } = useQuery({
+    queryKey: ["rent-benchmark"],
+    queryFn: api.rentBenchmark,
+    staleTime: 24 * 60 * 60 * 1000,
+  });
 
   // Nothing on this tab means anything without a reported rent: the velocity
   // banner, the chart and the first-year cost breakdown are all derived from
@@ -45,6 +62,24 @@ export function RentHistoryTab({ p }: { p: PropertySummary }) {
             {p.neighbourhood} average over the same period:{" "}
             <strong className="text-foreground">+{p.areaIncreasePct}%</strong>
           </p>
+
+          {/* Official comparison. Kept visually secondary and explicitly
+              labelled national: NBS does not publish the rent index by state,
+              and letting a reader take it for a Lagos figure would be the kind
+              of quiet overclaim this app is built to avoid. */}
+          {benchmark?.yoy_pct != null && (
+            <p className="mt-1.5 border-t border-score-bad/15 pt-1.5 text-2xs text-muted-foreground">
+              {t("rent.benchmarkLabel")}:{" "}
+              <strong className="text-foreground">+{benchmark.yoy_pct}%</strong>{" "}
+              <span className="text-subtle">
+                ·{" "}
+                {t("rent.benchmarkNote", {
+                  month: MONTHS[(benchmark.period_month ?? 1) - 1],
+                  year: String(benchmark.period_year ?? ""),
+                })}
+              </span>
+            </p>
+          )}
         </div>
 
         {/* Chart */}

@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { LanguageProvider } from "@/lib/i18n";
@@ -49,10 +50,18 @@ function property(over: Partial<PropertySummary> = {}): PropertySummary {
 }
 
 function renderTab(p: PropertySummary) {
+  // The tab fetches the official rent benchmark, so it needs a client. Retries
+  // are off: a failed fetch here should surface immediately rather than making
+  // the suite wait out a backoff.
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
   return render(
-    <LanguageProvider>
-      <RentHistoryTab p={p} />
-    </LanguageProvider>,
+    <QueryClientProvider client={client}>
+      <LanguageProvider>
+        <RentHistoryTab p={p} />
+      </LanguageProvider>
+    </QueryClientProvider>,
   );
 }
 

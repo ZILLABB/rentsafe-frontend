@@ -295,6 +295,17 @@ const STRINGS: Record<string, { en: string; pcm?: string; yo?: string }> = {
   "agents.flagged": { en: "Flagged", pcm: "We don flag am", yo: "A ti fi àmì sí i" },
   "agents.noAreas": { en: "No areas recorded yet", pcm: "We never get their area", yo: "A kò tíì kọ agbègbè sílẹ̀" },
 
+  "rent.benchmarkLabel": {
+    en: "Nigeria, all rents",
+    pcm: "Nigeria, all rent",
+    yo: "Nàìjíríà, gbogbo owó ilé",
+  },
+  "rent.benchmarkNote": {
+    en: "Official rent inflation to {month} {year}, published by the National Bureau of Statistics. National — NBS does not break the rent index down by state.",
+    pcm: "Na official rent inflation reach {month} {year}, from National Bureau of Statistics. Na for whole Nigeria — NBS no dey break am down by state.",
+    yo: "Ìfẹ̀ owó ilé ìjọba dé {month} {year}, láti ọ̀dọ̀ National Bureau of Statistics. Ti gbogbo orílẹ̀-èdè — NBS kò pín in ní ìpínlẹ̀.",
+  },
+
   // --- Fee checker ---------------------------------------------------------
   "fees.title": { en: "Is this fee normal?", pcm: "This fee make sense?", yo: "Ṣé owó yìí bọ́gbọ́n mu?" },
   "fees.subtitle": {
