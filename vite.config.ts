@@ -75,8 +75,9 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      // Local FastAPI backend (see backend/README.md).
-      "/api": { target: "http://localhost:8001", changeOrigin: true },
+      // Local FastAPI backend — uvicorn's default port, which is what the
+      // Dockerfile, .env.example and both READMEs also say.
+      "/api": { target: "http://localhost:8000", changeOrigin: true },
     },
   },
   build: {

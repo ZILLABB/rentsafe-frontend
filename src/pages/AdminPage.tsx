@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { CheckCircle2, ShieldAlert, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { FadeIn } from "@/components/motion";
+import { ClaimQueue } from "@/components/admin/ClaimQueue";
 import { PhotoQueue } from "@/components/admin/PhotoQueue";
 import { Card, SectionLabel } from "@/components/ui/Card";
 import { PropertyIdChip } from "@/components/ui/Chip";
@@ -119,7 +120,7 @@ function AdminLogin({ onDone }: { onDone: () => void }) {
 
 function AdminQueue({ onAuthError }: { onAuthError: () => void }) {
   const queryClient = useQueryClient();
-  const [view, setView] = useState<"reviews" | "photos">("reviews");
+  const [view, setView] = useState<"reviews" | "photos" | "claims">("reviews");
   const [acted, setActed] = useState<Record<number, string>>({});
   const [actError, setActError] = useState<string | null>(null);
 
@@ -174,7 +175,11 @@ function AdminQueue({ onAuthError }: { onAuthError: () => void }) {
       <FadeIn>
         <div className="flex items-center justify-between">
           <h1 className="font-display text-xl font-800 text-heading">
-            {view === "reviews" ? "Review moderation queue" : "Photo moderation queue"}
+            {view === "reviews"
+              ? "Review moderation queue"
+              : view === "photos"
+                ? "Photo moderation queue"
+                : "Agent profile claims"}
           </h1>
           <span className="rounded-sm bg-gold px-1.5 py-0.5 text-2xs font-800 text-heading">
             ADMIN
@@ -186,7 +191,7 @@ function AdminQueue({ onAuthError }: { onAuthError: () => void }) {
           calling them, so uploads sat pending and invisible forever. */}
       <FadeIn delay={0.02}>
         <div className="flex gap-2">
-          {(["reviews", "photos"] as const).map((v) => (
+          {(["reviews", "photos", "claims"] as const).map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
@@ -198,13 +203,14 @@ function AdminQueue({ onAuthError }: { onAuthError: () => void }) {
                   : "border border-border text-muted-foreground hover:text-foreground",
               )}
             >
-              {v === "reviews" ? "Reviews" : "Photos"}
+              {v === "reviews" ? "Reviews" : v === "photos" ? "Photos" : "Claims"}
             </button>
           ))}
         </div>
       </FadeIn>
 
       {view === "photos" && <PhotoQueue />}
+      {view === "claims" && <ClaimQueue />}
 
       {view === "reviews" && (
         <>
