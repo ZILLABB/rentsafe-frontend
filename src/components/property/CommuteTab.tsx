@@ -130,8 +130,23 @@ export function CommuteTab({ propertyId }: { propertyId: string }) {
             </p>
             {commute.google_estimate_min !== null ? (
               <p className="mt-1.5 text-2xs opacity-55">
-                Routing-app estimate for the same trip:{" "}
-                {formatMinutes(commute.google_estimate_min)}. Real experience wins.
+                {commute.routing_kind === "free_flow" ? (
+                  <>
+                    {/* Free-flow is the road network at its speed limits — 4am
+                        with nobody about. Describing it as "what your maps app
+                        says" would be false, and would make the tenant figures
+                        look absurd instead of informative. */}
+                    Empty roads, no traffic:{" "}
+                    {formatMinutes(commute.google_estimate_min)}. The gap is the
+                    traffic.
+                  </>
+                ) : (
+                  <>
+                    Routing-app estimate for the same trip:{" "}
+                    {formatMinutes(commute.google_estimate_min)}. Real experience
+                    wins.
+                  </>
+                )}
               </p>
             ) : (
               // "Nobody wired a routing key" and "we asked and got nothing"

@@ -258,9 +258,11 @@ export interface ApiCommute {
   typical_min: number | null;
   fastest_min: number | null;
   slowest_min: number | null;
-  /** A routing provider's traffic-aware drive time. Null when no provider is
-   *  configured, it was unreachable, or there is no drivable route. */
+  /** A routing engine's drive time. Null when unreachable or no drivable route. */
   google_estimate_min: number | null;
+  /** What kind of number that is — "traffic" (a model of current conditions,
+   *  what a phone shows) or "free_flow" (empty roads). Not interchangeable. */
+  routing_kind: "traffic" | "free_flow" | null;
   /** False when no routing key is configured at all — a different message to
    *  the user than "we asked and got nothing back". */
   routing_configured: boolean;
