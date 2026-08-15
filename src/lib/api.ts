@@ -87,6 +87,9 @@ async function send(path: string, init?: RequestInit): Promise<Response> {
   });
 }
 
+/** Total matching rows for the last paged request, when the server reported one. */
+export const lastTotalCount = { value: null as number | null };
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let res = await send(path, init);
 
@@ -101,6 +104,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       sessionEndedListeners.forEach((fn) => fn());
     }
   }
+
+  const total = res.headers.get("X-Total-Count");
+  lastTotalCount.value = total === null ? null : Number(total);
 
   if (!res.ok) {
     throw new Error(`API ${res.status}: ${await res.text()}`);

@@ -16,7 +16,7 @@ import { Chip, PropertyIdChip } from "@/components/ui/Chip";
 import { scoreColor } from "@/components/ui/Score";
 import { cn } from "@/lib/cn";
 import { formatNaira } from "@/lib/format";
-import { useProperties } from "@/lib/hooks";
+import { useProperties, usePropertyTotal } from "@/lib/hooks";
 import { useI18n } from "@/lib/i18n";
 import type { PropertyQuery } from "@/lib/api";
 import type { PropertySummary } from "@/lib/types";
@@ -53,6 +53,8 @@ export default function ExplorePage() {
   const maxRentKobo = active.find((f) => "localMaxRentKobo" in f)?.localMaxRentKobo;
 
   const { data, isLoading, isError, refetch } = useProperties(query);
+  // What matched, not what fitted on the page.
+  const { data: matched } = usePropertyTotal(query);
   const properties = (data ?? []).filter(
     (p) =>
       maxRentKobo === undefined ||
@@ -298,7 +300,16 @@ export default function ExplorePage() {
       {/* Reviewed near you */}
       <div className="flex items-center justify-between pt-1">
         <h2 className="font-display text-base font-800 text-heading">{t("explore.mostReviewed")}</h2>
-        <span className="text-xs text-subtle">{properties.length} {t("explore.properties")}</span>
+        <span className="text-xs text-subtle">
+          {/* Says "50 of 188" when the result is truncated, rather than
+              reporting the page size as though it were the whole set. */}
+          {matched != null && matched > properties.length
+            ? t("explore.showingOf", {
+                shown: String(properties.length),
+                total: String(matched),
+              })
+            : `${properties.length} ${t("explore.properties")}`}
+        </span>
       </div>
 
       <div className="space-y-2.5 pb-2">

@@ -11,6 +11,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   api,
   clearSession,
+  lastTotalCount,
   type ApiEnvironment,
   type ApiProperty,
   type ApiRentPoint,
@@ -97,15 +98,45 @@ function toReview(r: ApiReview): Review {
 
 /* ----------------------------------------------------------------- hooks */
 
-export function useProperties(query: PropertyQuery = {}) {
-  return useQuery<PropertySummary[]>({
+interface PropertyPage {
+  items: PropertySummary[];
+  /** How many matched the filter, before the page limit. */
+  total: number;
+}
+
+function propertyPageQuery(query: PropertyQuery) {
+  return {
     // The query is part of the key so filter changes refetch rather than
     // serving another filter's cached result.
-    queryKey: ["properties", query],
-    queryFn: async () => {
+    queryKey: ["properties", query] as const,
+    queryFn: async (): Promise<PropertyPage> => {
       const list = await api.listProperties(query);
-      return list.map((p) => toPropertySummary(p));
+      // Read immediately: the shared slot is overwritten by the next request.
+      const total = lastTotalCount.value;
+      const items = list.map((p) => toPropertySummary(p));
+      return { items, total: total ?? items.length };
     },
+  };
+}
+
+export function useProperties(query: PropertyQuery = {}) {
+  return useQuery({
+    ...propertyPageQuery(query),
+    select: (page: PropertyPage) => page.items,
+  });
+}
+
+/** How many properties match, including any beyond the page that was fetched.
+ *
+ *  Shares a cache key with `useProperties`, so this costs no extra request —
+ *  it reads a different slice of the same response. Without it the Explore
+ *  counter reported the page size as the result size: "50 properties" while
+ *  188 matched.
+ */
+export function usePropertyTotal(query: PropertyQuery = {}) {
+  return useQuery({
+    ...propertyPageQuery(query),
+    select: (page: PropertyPage) => page.total,
   });
 }
 

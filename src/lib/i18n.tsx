@@ -59,6 +59,11 @@ const STRINGS: Record<string, { en: string; pcm?: string; yo?: string }> = {
     pcm: "Nobody talk the rent yet",
     yo: "A kò tíì ròyìn owó ilé",
   },
+  "explore.showingOf": {
+    en: "{shown} of {total} properties",
+    pcm: "{shown} out of {total} houses",
+    yo: "{shown} nínú ilé {total}",
+  },
   "explore.properties": { en: "properties", pcm: "houses", yo: "ilé" },
   "explore.writeReview": { en: "Write a review", pcm: "Drop your tori", yo: "Kọ àgbéyẹ̀wò" },
   "explore.fullReport": { en: "See full property report", pcm: "See the full gist for this house", yo: "Wo ìròyìn ilé ní kíkún" },
